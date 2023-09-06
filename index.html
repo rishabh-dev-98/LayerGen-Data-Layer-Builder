@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LayerGen : Data Layer Builder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  </head>
+  <body>
+    <nav class="navbar" style="background-color: #F48D00;">
+      <div class="container justify-content-center">
+        <span class="navbar-brand mb-0 h1"><strong><em>LayerGen : Data Layer Builder</em></strong></span>
+      </div>
+    </nav>
+    <div class="container my-5">
+      <div class="alert alert-warning alert-dismissible fade show" id="copyAlert" role="alert" style="display: none;">
+        <i class="bi bi-check-circle-fill mr-2"></i> <strong>Congratulations!!</strong> Data Layer is created.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <form class="needs-validation" id="form" novalidate>
+        <div class="mb-3">
+          <label for="exampleInputDataLayer" class="form-label">Data Layer * <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Please select the type of data layer you want to create."></i></label>
+          <select class="form-select" id="dataLayerSelect" aria-label="Default select example" onclick="selectedDataLayer();dropdown()">
+            <option value="0" selected>Select any Data Layer type</option>
+            <option value="1">Event Driven Data Layer (EDDL)</option>
+            <option value="2">Adobe Client Data Layer (ACDL)</option>
+            <option value="3">Adobe Client Data Layer (ACDL) - Standardisation Approach</option>
+            <option value="4">Adobe Client Data Layer (ACDL) - Common Emitter Approach</option>
+          </select>
+          
+          <div id="DataLayerSuggestion" class="form-text">Choose your data layer wisely.</div>
+        </div>
+        <div class="mb-3">
+          <!-- Button trigger modal -->
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <button type="button" class="btn btn-link btn-sm" id="exampleDataLayerModalButton" onclick="DataLayerModal()" style="display: none;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              <em> Refer Example Data Layer format.</em>
+            </button>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Example Data Layer</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                    <div class="mb-3">
+                      <img src="" class="img-fluid" alt="..."- id="exampleDataLayerImage">
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer justify-content-center">
+                  <p class="fst-italic"><b>Note : </b> This is an example data layer for your reference to understand how you can create your own unique data layer.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="exampleInputEvent" class="form-label" id="labelEvent" style="display: none;">Event Name * <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Event name means the event when the created data layer will be fired. Please specify only one event name. If more than one value is specified, then first event value will be considered always"></i></label>
+          <input type="text" class="form-control" id="exampleInputEvent" style="display: none;" onkeypress="eventKeyPress()" onblur="eventBlur()" required>
+          <div class="invalid-feedback" id="errorEvent" style="display: none;">
+            Please enter an appropriate event name.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="eddldataName" class="form-label" id="labelEddldataName" style="display: none;">Data Layer Content Name * <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Content object name of data layer which will have all page related details. Please specify only one content object name. If more than one value is specified, then first content value will be considered always"></i></label>
+          <input type="text" class="form-control" id="eddldataName" style="display: none;" onkeypress="dataContentKeyPress()" onblur="dataContentBlur()" required>
+          <div class="invalid-feedback" id="errorDataContent" style="display: none;">
+            Please enter an appropriate data content name.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="ComponentName" class="form-label" id="labelComponentName" style="display: none;">Standardised Component Name * <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Standardised Component object name of data layer which will have all page related details. Please specify only one component object name. If more than one value is specified, then first component object value will be considered always"></i></label>
+          <input type="text" class="form-control" id="ComponentName" style="display: none;" onkeypress="dataComponentKeyPress()" onblur="dataComponentBlur()" required>
+          <div class="invalid-feedback" id="errorDataComponent" style="display: none;">
+            Please enter an appropriate data Component name.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck6" onclick="globalComponentCheckbox()" style="display: none;" unchecked aria-required="false">
+          <label class="form-check-label" for="exampleCheck6" id="globalComponentCheckboxLabel" style="display: none;">Want Standardised Global Component? <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Check it to include global component."></i></label>
+        </div>
+        <div class="mb-3">
+          <label for="GlobalComponentName" class="form-label" id="labelGlobalComponentName" style="display: none;">Standardised Global Component Name <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Standardised Global Component object name of data layer which contains value of feature we are implementing. Please specify only one global component name. If more than one value is specified, then first global component value will be considered always"></i></label>
+          <input type="text" class="form-control" id="GlobalComponentName" style="display: none;" onkeypress="dataGlobalComponentKeyPress()" onblur="dataGlobalComponentBlur()" aria-required="false">
+          <div class="invalid-feedback" id="errorDataGlobalComponent" style="display: none;">
+            Please enter an appropriate data Global Component name.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck5" onclick="StadardCMCheckbox()" style="display: none;" unchecked required>
+          <label class="form-check-label" for="exampleCheck5" id="labelCMattributes" style="display: none;">Want Standard Common Emitter Attributes? * <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Standard Common Emitter attributes will be added."></i></label>
+          <div id="CMattributesSuggestion" class="form-text" style="display: none;">If you select it, automatically standard common emitter attributes will be added that you want to track in data layer.</div>
+          <div class="invalid-feedback" id="errorCMCheckbox" style="display: none;">
+            Please check the Standard Common Emitter checkbox.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck3" onclick="pageCheckbox()" style="display: none;" unchecked required>
+          <label class="form-check-label" for="exampleCheck3" id="pageCheckboxLabel" style="display: none;">Want Page Details? <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Check it to include all page related details."></i></label>
+          <div class="invalid-feedback" id="errorPageCheckbox" style="display: none;">
+            Please check the Page Details checkbox.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputDataLayerAttributes1" class="form-label" id="labelPage" style="display: none;">Page Related Data Layer Attributes <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Specify all page related details."></i></label></label>
+          <input type="text" class="form-control" id="exampleInputDataLayerAttributes1" style="display: none;" onkeypress="pageKeyPress()" onblur="pageBlur()" required>
+          <div class="invalid-feedback" id="errorPage" style="display: none;">
+            Please enter an appropriate Page attributes.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck4" onclick="clickCheckbox()" style="display: none;" unchecked required>
+          <label class="form-check-label" for="exampleCheck4" style="display: none;" id="clickCheckboxLabel">Want Click Details? <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Check it to include all click related details."></i></label></label>
+          <div class="invalid-feedback" id="errorClickCheckbox" style="display: none;">
+            Please check the Click Details checkbox.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputDataLayerAttributes4" class="form-label" id="labelClick" style="display: none;">Click Related Data Layer Attributes <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Specify all click related details."></i></label></label>
+          <input type="text" class="form-control" id="exampleInputDataLayerAttributes4" style="display: none;" onkeypress="clickKeyPress()" onblur="clickBlur()" required>
+          <div class="invalid-feedback" id="errorClick" style="display: none;">
+            Please enter an appropriate Click attributes.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1" onclick="userCheckbox()" style="display: none;" unchecked required>
+          <label class="form-check-label" for="exampleCheck1" style="display: none;" id="userCheckboxLabel">Want User Details? <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Check it to include all user related details."></i></label></label>
+          <div class="invalid-feedback" id="errorUserCheckbox" style="display: none;">
+            Please check the User Details checkbox.
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputDataLayerAttributes2" class="form-label" id="labelUser" style="display: none;">User Related Data Layer Attributes <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Specify all user related details."></i></label></label>
+          <input type="text" class="form-control" id="exampleInputDataLayerAttributes2" style="display: none;" onkeypress="userKeyPress()" onblur="userBlur()" required>
+          <div class="invalid-feedback" id="errorUser" style="display: none;">
+            Please enter user related details like username, userstatus, user id etc. or any custom attribute that you want to track in data layer.
+          </div>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck2" onclick="impressionCheckbox()" style="display: none;" unchecked required>
+          <label class="form-check-label" for="exampleCheck2" style="display: none;" id="impressionCheckboxLabel">Want Impressions Details? <i class="bi bi-info-circle-fill mx-3 justify-content-end" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-custom-class="custom-tooltip" data-bs-title="Check it to include impressions related details."></i></label></label>
+          <div id="impressionSuggestion" class="form-text" style="display: none;">If You select it, <strong>'UI Section Impressions'</strong> and <strong>'UI Element Impressions'</strong> will be automatically added in the data layer.</div>
+          <div class="invalid-feedback" id="errorImpressionCheckbox" style="display: none;">
+            Please check the Impressions Details checkbox.
+          </div>
+        </div>
+        <input type="submit" class="btn btn-outline-primary mb-3" onclick="Submit()" value="Create Data Layer" id="submitButton" style="display: none;">
+        <div class="mb-3">
+          <div class="btn-group mb-3" role="group" aria-label="Basic outlined example" style="float: right;">
+            <input type="button" class="btn btn-outline-success" value="Edit" id="editButton" onclick="editDataLayer()" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Edit Data Layer">
+            <input type="button" class="btn btn-outline-warning" value="Copy" onclick="copyToClipboard()" onblur = "copyButtonBlur()" style="display: none;" id="copyButton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Copy to clipboard">
+            <input type="button" class="btn btn-outline-secondary" value="Reset" id="resetButton" onclick="resetValues()" style="display: none;" itemid="resetButton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="Reset Value">
+          </div>
+          <textarea class="form-control mb-3" id="resultDataLayer" cols="80" rows="20" onblur="textAreaBlur()" placeholder="Resultant Data Layer" style="display: none;" disabled></textarea>
+        </div>
+      </form>
+    </div>
+    <nav class="navbar fixed-bottom" style="background-color: #F48D00;">
+      <div class="container justify-content-center">
+        <span class="navbar-brand mb-0 h1 fw-bolder fst-italic"><i class="bi bi-check-circle-fill mx-3"></i>Admin Contact : rishabh_bhalla@optum.com</span>
+      </div>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+      'use strict'
+
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      const forms = document.querySelectorAll('.needs-validation')
+
+      // Loop over them and prevent submission
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+
+        // var resetButton = document.getElementById("resetButton");
+        // var dataLayerSelected = document.getElementById("dataLayerSelect");
+        // resetButton.addEventListener("click", function(event){
+        //   if (!form.checkValidity()) {
+        //     event.preventDefault()
+        //     event.stopPropagation()
+        //   }
+        // form.classList.remove("was-validated");
+        // }, false)
+
+        // dataLayerSelected.addEventListener("click", function(event){
+        //   if (!form.checkValidity()) {
+        //     event.preventDefault()
+        //     event.stopPropagation()
+        //   }
+        // form.classList.remove("was-validated");
+        // });
+      })
+    })()
+    
+
+    // JS CODE FOR TOOLTIP IMPLEMENTATION
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+  </body>
+</html>
